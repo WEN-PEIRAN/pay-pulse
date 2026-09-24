@@ -1,0 +1,1 @@
+{"name":"薪跳 PayPulse","short_name":"薪跳","description":"让每一秒的工资都看得见","start_url":"./","display":"standalone","background_color":"#fff8f6","theme_color":"#fff8f6","orientation":"portrait-primary","icons":[{"src":"icons/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"},{"src":"icons/apple-touch-icon.png","sizes":"180x180","type":"image/png"}]}

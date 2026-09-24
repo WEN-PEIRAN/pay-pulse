@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#fff8f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="薪跳">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+  <title>薪跳 PayPulse</title>
+</head>
+<body data-theme="peach">
+  <div id="privacyIntro" class="modal open" role="dialog" aria-modal="true">
+    <div class="modal-card privacy-card">
+      <div class="mascot big">♥</div>
+      <h1 data-i18n="privacyTitle">你的工资，只属于你</h1>
+      <p data-i18n="privacyBody">薪跳无需注册，不会收集姓名或邮箱，也没有用户数据库。收入设定与记录仅保存在当前设备的浏览器中，你可以随时清除全部数据。</p>
+      <label class="check-row"><input id="privacyCheck" type="checkbox"><span data-i18n="privacyAgree">我明白清除浏览器数据后记录可能无法恢复</span></label>
+      <button id="privacyContinue" class="primary" disabled data-i18n="continue">明白了，开始使用</button>
+      <button id="privacyLang" class="text-button">English</button>
+    </div>
+  </div>
+
+  <div id="setupModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-card setup-card">
+      <div class="step-dots"><i class="active"></i><i></i><i></i><i></i></div>
+      <section class="setup-step active" data-step="0">
+        <div class="mascot big">♥</div>
+        <h2 data-i18n="welcome">欢迎来到薪跳</h2>
+        <p data-i18n="chooseLanguage">选择界面语言</p>
+        <div class="choice-grid two">
+          <button class="choice lang-choice selected" data-lang="zh-CN">中文</button>
+          <button class="choice lang-choice" data-lang="en">English</button>
+        </div>
+      </section>
+      <section class="setup-step" data-step="1">
+        <h2 data-i18n="chooseTheme">选择你喜欢的主题</h2>
+        <p data-i18n="changeAnytime">以后可以随时在设定中更改</p>
+        <div class="theme-preview-grid">
+          <button class="theme-preview selected" data-theme-value="peach"><span class="preview peach">♥</span><b data-i18n="peachPulse">蜜桃心跳</b><small>Peach Pulse</small></button>
+          <button class="theme-preview" data-theme-value="sky"><span class="preview sky">♥</span><b data-i18n="skyPulse">晴空心跳</b><small>Sky Pulse</small></button>
+        </div>
+      </section>
+      <section class="setup-step" data-step="2">
+        <h2 data-i18n="incomeDetails">收入信息</h2>
+        <label><span data-i18n="incomeType">收入类型</span><select id="incomeType"><option value="fortnight" data-i18n="fortnightly">每两周收入</option><option value="weekly" data-i18n="weekly">每周收入</option><option value="monthly" data-i18n="monthly">每月收入</option><option value="annual" data-i18n="annual">年收入</option><option value="hourly" data-i18n="hourly">时薪</option></select></label>
+        <label><span data-i18n="incomeBasis">收入基准</span><select id="incomeBasis"><option value="after" data-i18n="afterTax">税后</option><option value="before" data-i18n="beforeTax">税前</option></select></label>
+        <label><span data-i18n="amount">金额</span><div class="money-field"><span>$</span><input id="incomeAmount" type="number" min="0" step="0.01" value="2880" inputmode="decimal"></div></label>
+        <label><span data-i18n="currency">货币</span><select id="currency"><option>AUD</option><option>USD</option><option>CNY</option><option>GBP</option><option>NZD</option><option>EUR</option></select></label>
+      </section>
+      <section class="setup-step" data-step="3">
+        <h2 data-i18n="workSchedule">工作时间</h2>
+        <div class="two-fields"><label><span data-i18n="start">上班</span><input id="workStart" type="time" value="09:00"></label><label><span data-i18n="finish">下班</span><input id="workEnd" type="time" value="17:30"></label></div>
+        <div class="break-settings">
+          <p class="field-title" data-i18n="hasUnpaidBreak">你有明确的无薪休息时间吗？</p>
+          <div class="segmented break-availability">
+            <button type="button" data-break-available="no" class="active" data-i18n="noUnpaidBreak">没有无薪休息时间</button>
+            <button type="button" data-break-available="yes" data-i18n="hasUnpaidBreakYes">有无薪休息时间</button>
+          </div>
+          <p class="break-help" data-i18n="noBreakHelp">完整工作时段都会计算工资。</p>
+          <div id="breakModePanel" class="hidden">
+            <p class="field-title" data-i18n="breakMode">选择无薪休息计算方式</p>
+            <div class="segmented break-mode">
+              <button type="button" data-break-mode="fixed" class="active" data-i18n="fixedBreak">固定时间段</button>
+              <button type="button" data-break-mode="flexible" data-i18n="flexibleBreak">灵活模式</button>
+            </div>
+            <div id="fixedBreakFields" class="two-fields">
+              <label><span data-i18n="breakStart">休息开始</span><input id="breakStart" type="time" value="12:30"></label>
+              <label><span data-i18n="breakEnd">休息结束</span><input id="breakEnd" type="time" value="13:00"></label>
+            </div>
+            <label id="flexibleBreakField" class="hidden"><span data-i18n="unpaidBreak">每日无薪休息（分钟）</span><input id="breakMinutes" type="number" min="0" max="300" value="30"></label>
+            <p id="breakModeHelp" class="break-help" data-i18n="fixedBreakHelp">固定时段内，实时工资会暂停增长。</p>
+          </div>
+        </div>
+        <p class="field-title" data-i18n="workDays">工作日</p>
+        <div id="workDays" class="day-picker"><button data-day="1" class="on">一</button><button data-day="2" class="on">二</button><button data-day="3" class="on">三</button><button data-day="4" class="on">四</button><button data-day="5" class="on">五</button><button data-day="6">六</button><button data-day="0">日</button></div>
+        <div class="calc-preview"><span data-i18n="estimatedRate">估算时薪</span><b id="setupHourly">$36.00</b><span data-i18n="perSecond">每秒收入</span><b id="setupSecond">$0.0100</b></div>
+      </section>
+      <div class="setup-actions"><button id="setupBack" class="secondary hidden" data-i18n="back">返回</button><button id="setupNext" class="primary" data-i18n="next">下一步</button></div>
+    </div>
+  </div>
+
+  <div id="eventModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-card event-card">
+      <button class="close" data-close="eventModal">×</button>
+      <div id="eventIcon" class="event-hero"><img class="animal hero-animal" src="img/events/slack.png" alt=""></div>
+      <h2 id="eventName">带薪摸鱼</h2>
+      <div id="eventTimer" class="event-timer">00:00:00</div>
+      <p><span data-i18n="earnedDuring">本次已经赚了</span> <b id="eventEarned">$0.00</b></p>
+      <div class="event-actions"><button id="eventCancel" class="cancel-button" data-i18n="cancelEvent">取消</button><button id="eventStop" class="primary danger" data-i18n="stopAndSettle">停止并结算</button></div>
+    </div>
+  </div>
+
+  <div id="resultModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-card result-card">
+      <div id="resultIcon" class="event-hero"><img class="animal hero-animal" src="img/events/custom.png" alt=""></div>
+      <h2 data-i18n="eventComplete">带薪事件完成！</h2>
+      <p id="resultSentence"></p>
+      <div class="result-money" id="resultMoney">$0.00</div>
+      <button class="primary" data-close="resultModal" data-i18n="nice">收下这份快乐</button>
+    </div>
+  </div>
+
+  <div id="app" class="app-shell hidden">
+    <header>
+      <div class="brand"><div class="logo-heart">♥</div><div><h1 data-i18n="appName">薪跳</h1><span data-i18n="tagline">记录你的每一次薪跳</span></div></div>
+      <div class="header-actions"><button id="privacyToggle" aria-label="privacy"><img id="privacyIcon" src="img/ui/privacy-visible.svg" alt=""></button><button id="settingsBtn" aria-label="settings"><img src="img/ui/settings.svg" alt=""></button></div>
+    </header>
+
+    <main>
+      <section id="homePage" class="page active">
+        <article class="earnings-card">
+          <div class="spark s1">✦</div><div class="spark s2">♥</div><div class="spark s3">✦</div>
+          <p data-i18n="earnedToday">今天已经赚了</p>
+          <div id="salaryAmount" class="salary heartbeat"><span id="currencySymbol">$</span><span id="salaryValue">0.00</span></div>
+          <div class="per-second"><span id="perSecondValue">+$0.0000</span> <span data-i18n="perSecSuffix">/ 秒</span></div>
+          <div id="heartBuddy" class="heart-buddy">♥<i>⌣</i></div>
+          <p id="workStatus" class="status-pill" data-i18n="beforeWork">今天的收入旅程还没开始</p>
+        </article>
+
+        <article class="progress-card">
+          <div><span data-i18n="todayProgress">今日工资进度</span><b id="progressText">0%</b></div>
+          <div class="progress-track"><i id="progressFill"></i><em>★</em></div>
+          <div><span data-i18n="untilFinish">距离下班还有</span><b id="untilFinish">--</b></div>
+        </article>
+
+        <div class="mini-grid">
+          <article><span class="mini-icon lavender">◷</span><small data-i18n="workedTime">已工作时间</small><b id="workedTime">00:00:00</b></article>
+          <article><span class="mini-icon gold">●</span><small data-i18n="estimatedToday">今日预计收入</small><b id="estimatedToday">$0.00</b></article>
+          <article><span class="mini-icon mint">☕</span><small data-i18n="unpaidBreakShort">无薪休息</small><b id="breakDisplay">00:30</b></article>
+          <article><span class="mini-icon blue">▣</span><small data-i18n="workHours">上班时间</small><b id="scheduleDisplay">09:00–17:30</b></article>
+        </div>
+
+        <article class="event-launcher"><div class="event-list-wrap"><p data-i18n="chooseEvent">选择你要开始的带薪事件</p><div id="eventButtons" class="event-buttons"></div></div></article>
+
+        <article class="recent-card"><div class="section-title"><b data-i18n="todayEvents">今日带薪事件记录</b><button id="viewAll" data-i18n="viewAll">查看全部 ›</button></div><div id="recentEvents" class="recent-events"></div></article>
+      </section>
+
+      <section id="timerPage" class="page"><div class="page-heading"><h2 data-i18n="timer">计时</h2><p data-i18n="timerHint">选择一种带薪事件，看看这段时间值多少钱。</p></div><div id="allEventButtons" class="event-grid-large"></div></section>
+      <section id="recordsPage" class="page"><div class="page-heading"><h2 data-i18n="records">记录</h2><p data-i18n="recordsHint">所有记录仅保存在这台设备中。</p></div><div id="recordsList" class="records-list"></div></section>
+      <section id="statsPage" class="page"><div class="page-heading"><h2 data-i18n="stats">统计</h2><p data-i18n="statsHint">看看时间都变成了什么。</p></div><div id="statsCards" class="stats-grid"></div></section>
+      <section id="settingsPage" class="page"><div class="page-heading"><h2 data-i18n="settings">设定</h2></div><div class="settings-list">
+        <label><span data-i18n="language">语言</span><select id="settingLang"><option value="zh-CN">中文</option><option value="en">English</option></select></label>
+        <div><span data-i18n="theme">主题</span><div class="inline-themes"><button data-theme-value="peach">🌸 <span data-i18n="peachPulse">蜜桃心跳</span></button><button data-theme-value="sky">💧 <span data-i18n="skyPulse">晴空心跳</span></button></div></div>
+        <button id="editSetup" class="setting-button" data-i18n="editIncome">修改收入与工作时间</button>
+        <button id="toggleAmounts" class="setting-button" data-i18n="hideAmounts">快速隐藏金额</button>
+        <div class="privacy-note"><b data-i18n="localOnly">仅保存在本机</b><p data-i18n="privacyShort">无需注册，不上传工资与计时记录，不设置用户数据库。</p></div>
+        <button id="clearData" class="setting-button clear" data-i18n="clearAll">清除全部数据</button>
+        <p class="version">薪跳 PayPulse V1.2<br><strong>Developed by Peiran Wen</strong></p>
+      </div></section>
+    </main>
+
+    <nav><button class="active" data-page="homePage"><span>⌂</span><b data-i18n="home">首页</b></button><button data-page="timerPage"><span>◷</span><b data-i18n="timer">计时</b></button><button data-page="recordsPage"><span>▤</span><b data-i18n="records">记录</b></button><button data-page="statsPage"><span>⌁</span><b data-i18n="stats">统计</b></button><button data-page="settingsPage"><span>♡</span><b data-i18n="mine">我的</b></button></nav>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
